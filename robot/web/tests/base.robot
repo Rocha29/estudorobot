@@ -3,6 +3,8 @@ Library     SeleniumLibrary
 
 *** Variables ***
 ${url}              https://training-wheels-protocol.herokuapp.com 
+${user}             stark
+${pwd}              jarvis!
 
 *** Keywords ***
 Nova sessão

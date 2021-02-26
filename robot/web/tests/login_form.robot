@@ -7,8 +7,8 @@ Test Teardown   Encerra sessão
 *** Test Cases ***
 Login com sucesso
     Go To                   ${url}/login
-    Input text              css:input[name=username]    stark
-    Input text              css:input[name=password]    jarvis!
+    Input text              css:input[name=username]    ${user}
+    Input text              css:input[name=password]    ${pwd}
     Click Element           class:btn-login
 
     Page Should Contain     Olá, Tony Stark. Você acessou a área logada!
