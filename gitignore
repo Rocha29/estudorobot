@@ -1,3 +1,4 @@
 /log/*.*
 /web/log/*.*
 /tests/log/*.*
+/robot/web/tests/log/*.*
