@@ -1,1 +1,3 @@
 /log/*.*
+/web/log/*.*
+/tests/log/*.*
