@@ -1,63 +1,49 @@
-# estudorobot
-Estudo do framework
-
 *** Settings ***
-Documentation    Projeto E2E start Processo do camunda
-Library     CamundaLibrary    ${camunda_host}     
-Library     RequestsLibrary
-Library    Collections
-Library    String
-**Variables ***
-${camunda_host}               http://localhost:8080
-${my_process_definition_key}  ExpandRome
+Documentation  Login de acesso portal BPMN CAMUNDA
+          ...  Projeto simples de apresentação da ferramenta
+          ...  tentativa de realizar login no portal
+Library  SeleniumLibrary
 
-###proxys
-${false}=          Convert To Boolean       false
-${proxies}=        Create Dictionary        http=http://proxyad.venti:8989
-${headersAPI}=     Create dictionary        authorization=${token}          id_process=1      x-apigw-api-id=asdfghr  x-venti-apikey=fsdf    x-venti-flowID=tetettrte    Content-Type=application/json
-${proxies}      Create Dictionary     http=coloca_a_url_para_http_aqui      https=coloca_a_url_para_https_aqui
+Resource        base.robot
+Resource        credenciais.robot
 
-*** Test case ***
-#Historia XXX
-Cenario 01: Start my process
-   Start my process
+Test Setup      Nova sessão
+Test Teardown   Encerra sessão
+
+*** Test Cases ***
+01-Cenario: Fazer Login no Camunda
+
+    [Tags]  Login
+    E realizo Login
+    Entao valido a mensagem de acesso    
+    Clicar em Entrar
+
 *** Keywords ***
-Start my process
-    #Post with JSON String
-    Post with dictionary
-    Consultar processo
-    Conferir o status code   200
-    #Conferir o reason        OK
-
-Post with dictionary
-    ${value}    Set Variable    [{"CNPJ": "99999999999999","name":"Robert Dictionary"}]
-    ${data}    Create Dictionary    value=${value}    type=String
-    ${variables}    Create Dictionary    data=${data}
-    ${body}    Create Dictionary     variables=${variables}
-    ${headers}    Create Dictionary
-    ...    Content-Type=application/json
-    Create Session    camunda     ${camunda_host}   proxies=${proxies}         disable_warnings=1   verify=${false}
-    ${RESPOSTA}       Post On Session
-    ...    alias=camunda
-    ...    url=/engine-rest/process-definition/key/${my_process_definition_key}/start
-    ...    json=${body}
-    ...    headers=${headers}
-    [Return]    ${body}
-    Log            ${RESPOSTA.json()["id"]}         
-    Set Test Variable  ${RESPOSTA}
     
     
-      
-   
-Consultar processo  
-    ${RESPOSTA}    GET On Session         camunda    engine-rest/process-instance/${RESPOSTA.json()["id"]}
-    Log            ${RESPOSTA.text}
-    Set Test Variable  ${RESPOSTA} 
+E realizo Login
+    
+    Wait Until Element Is Visible   xpath://input[1]   
+     
+    Input text                  xpath://input[1]         ${user}
+    Click Element               xpath://input[2]      
+    Input text                  xpath://input[2]         ${pwd}
+    Click Element               xpath://button[contains(text(),'Log in')]
+    
 
-Conferir o status code
-    [Arguments]                     ${STATUS_DESEJADO}       
-    Should Be Equal As Strings      ${RESPOSTA.status_code}     ${STATUS_DESEJADO}
+Entao valido a mensagem de acesso
+   Wait Until Element Is Visible  xpath://body/div[1]/div[1]/div[1]/div[1]/span[1]
+   Click Element                 xpath://body/div[1]/div[1]/div[1]/div[1]/span[1]
+   ${message}=                 Get WebElement      xpath://span[contains(text(),'Camunda Welcome')]
+    Should Contain              ${message.text}     Camunda Welcome 
+    Sleep    2
 
-Conferir o reason
-    [Arguments]                     ${REASON_DESEJADO}
-    Should Be Equal As Strings      ${RESPOSTA.reason}          ${REASON_DESEJADO}       
+Clicar em Entrar
+    Click Element                xpath://a[contains(text(),'Cockpit')]
+    Wait Until Element Is Visible   xpath://section[2]/div[1]/div[1]/div[1]/a[1]
+    Click Element                xpath://section[2]/div[1]/div[1]/div[1]/a[1]
+    Click Element                xpath://a[contains(text(),'ExpandRome')]
+    Sleep    2
+    Click Element                xpath://tbody/tr[1]/td[2]
+    Sleep   2
+a
